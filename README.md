@@ -358,7 +358,7 @@ Log in via **http://localhost/smart-pdf/auth/login.php** and you'll see an
 
 | Tool              | Engine                                   | Notes |
 |-------------------|------------------------------------------|-------|
-| PDF → Word        | PyMuPDF + python-docx                     | Preserves text styling and approximate page positioning; complex layouts may need adjustment, scanned PDFs need OCR first |
+| PDF → Word        | PyMuPDF + python-docx                     | Preserves the original page appearance by embedding each page as a high-resolution image; page text is not editable |
 | Word → PDF        | LibreOffice (`docx → pdf`)               | Preserves formatting well |
 | PDF → Excel       | LibreOffice (`pdf → xlsx`)               | Works best with real table structures |
 | Excel → PDF       | LibreOffice (`xlsx → pdf`)               | Each sheet becomes a page |
@@ -386,7 +386,7 @@ through this checklist:
 
 | # | Tool                | Test steps                                                                                       | Expected result |
 |---|---------------------|--------------------------------------------------------------------------------------------------|-----------------|
-| 1 | PDF to Word         | Upload `sample.pdf` → click Convert                                                              | `.docx` file downloads |
+| 1 | PDF to Word         | Upload `sample.pdf` → click Convert                                                              | `.docx` downloads with the PDF page appearance preserved; page content is not editable |
 | 2 | Word to PDF         | Upload any `.docx` → Convert                                                                     | `.pdf` downloads |
 | 3 | PDF to Excel        | Upload a table-based PDF → Convert                                                                | `.xlsx` downloads |
 | 4 | Excel to PDF        | Upload any `.xlsx` → Convert                                                                     | `.pdf` downloads |

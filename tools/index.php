@@ -19,7 +19,7 @@ $categories = [
 
 $tools = [
     // Convert
-    ['slug' => 'pdf_to_word', 'name' => 'PDF to Word', 'desc' => 'Convert PDF into editable DOCX.', 'color' => 'tc-blue', 'cat' => 'convert'],
+    ['slug' => 'pdf_to_word', 'name' => 'PDF to Word', 'desc' => 'Convert PDF into Word while preserving the original page appearance.', 'color' => 'tc-blue', 'cat' => 'convert'],
     ['slug' => 'word_to_pdf', 'name' => 'Word to PDF', 'desc' => 'Convert DOC/DOCX into PDF.', 'color' => 'tc-blue', 'cat' => 'convert'],
     ['slug' => 'pdf_to_excel','name' => 'PDF to Excel','desc' => 'Extract tables into XLSX.', 'color' => 'tc-green', 'cat' => 'convert'],
     ['slug' => 'excel_to_pdf','name' => 'Excel to PDF','desc' => 'Convert XLS/XLSX into PDF.', 'color' => 'tc-green', 'cat' => 'convert'],

@@ -9,7 +9,7 @@ $pageTitle = 'Smart PDF - Every PDF Tool You Need in One Place';
 $pageDescription = 'Convert, compress, merge, split, and edit your PDF files online. Free, secure, and easy to use.';
 
 $convertTools = [
-    ['slug' => 'pdf_to_word owais', 'name' => 'PDF to Word',  'desc' => 'Convert PDFs into editable Word documents.', 'color' => 'tc-blue'],
+    ['slug' => 'pdf_to_word', 'name' => 'PDF to Word',  'desc' => 'Convert PDFs into Word while preserving the original page appearance.', 'color' => 'tc-blue'],
     ['slug' => 'word_to_pdf', 'name' => 'Word to PDF',  'desc' => 'Convert DOC / DOCX files into PDF.',         'color' => 'tc-blue'],
     ['slug' => 'pdf_to_excel','name' => 'PDF to Excel', 'desc' => 'Extract tabular data into Excel sheets.',    'color' => 'tc-green'],
     ['slug' => 'excel_to_pdf','name' => 'Excel to PDF', 'desc' => 'Convert XLS / XLSX into PDF.',               'color' => 'tc-green'],

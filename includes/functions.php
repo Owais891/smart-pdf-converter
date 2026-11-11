@@ -332,7 +332,7 @@ function set_theme(string $theme): void
 
 /**
  * Validate an uploaded file with finfo, with a content-checked fallback for
- * PowerPoint formats that the server reports as a generic MIME type.
+ * Office formats that the server reports as a generic MIME type.
  * Returns [ok, storedPath, storedName, originalName, error]
  */
 function save_uploaded_file(
@@ -352,16 +352,21 @@ function save_uploaded_file(
     $finfo = new finfo(FILEINFO_MIME_TYPE);
     $mime = $finfo->file($file['tmp_name']);
     if (!in_array($mime, $allowedMimes, true)) {
-        $powerPointMimeByExtension = [
+        $officeMimeByExtension = [
+            'doc'  => 'application/msword',
+            'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+            'odt'  => 'application/vnd.oasis.opendocument.text',
             'ppt'  => 'application/vnd.ms-powerpoint',
             'pptx' => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
             'odp'  => 'application/vnd.oasis.opendocument.presentation',
+            'txt'  => 'text/plain',
         ];
         $extension = strtolower(pathinfo($file['name'] ?? '', PATHINFO_EXTENSION));
-        $expectedMime = $powerPointMimeByExtension[$extension] ?? null;
+        $expectedMime = $officeMimeByExtension[$extension] ?? null;
         $genericOfficeMimes = [
             'application/octet-stream',
             'application/zip',
+            'application/x-zip-compressed',
             'application/x-ole-storage',
             'application/vnd.ms-office',
         ];
@@ -370,7 +375,7 @@ function save_uploaded_file(
             !$expectedMime ||
             !in_array($expectedMime, $allowedMimes, true) ||
             !in_array($mime, $genericOfficeMimes, true) ||
-            !is_valid_powerpoint_upload($file['tmp_name'], $extension)
+            !is_valid_office_upload($file['tmp_name'], $extension)
         ) {
             return [false, null, null, null, 'File type "' . e($mime) . '" is not allowed.'];
         }
@@ -387,6 +392,125 @@ function save_uploaded_file(
     return [true, $path, $stored, $original, null];
 }
 
+function is_valid_office_upload(string $path, string $extension): bool
+{
+    if (in_array($extension, ['ppt', 'pptx', 'odp'], true)) {
+        return is_valid_powerpoint_upload($path, $extension);
+    }
+
+    return is_valid_word_upload($path, $extension);
+}
+
+function is_valid_word_upload(string $path, string $extension): bool
+{
+    if ($extension === 'txt') {
+        return !file_contains_bytes($path, "\0");
+    }
+
+    if ($extension === 'doc') {
+        $signature = file_get_contents($path, false, null, 0, 8);
+        return $signature === "\xD0\xCF\x11\xE0\xA1\xB1\x1A\xE1"
+            && file_contains_bytes($path, 'WordDocument');
+    }
+
+    if (!in_array($extension, ['docx', 'odt'], true)) {
+        return false;
+    }
+
+    if ($extension === 'docx') {
+        $contentTypes = read_office_zip_entry($path, '[Content_Types].xml');
+        return office_zip_entry_exists($path, 'word/document.xml')
+            && $contentTypes !== null
+            && strpos($contentTypes, 'wordprocessingml.document.main+xml') !== false;
+    }
+
+    return read_office_zip_entry($path, 'mimetype') === 'application/vnd.oasis.opendocument.text';
+}
+
+function office_zip_entry_exists(string $path, string $entry): bool
+{
+    if (class_exists('ZipArchive')) {
+        $archive = new ZipArchive();
+        if ($archive->open($path) !== true) {
+            return false;
+        }
+
+        try {
+            return $archive->locateName($entry) !== false;
+        } finally {
+            $archive->close();
+        }
+    }
+
+    if (!class_exists('PharData')) {
+        return false;
+    }
+
+    try {
+        $archive = new PharData($path);
+        return isset($archive[$entry]);
+    } catch (UnexpectedValueException $error) {
+        return false;
+    }
+}
+
+function read_office_zip_entry(string $path, string $entry): ?string
+{
+    if (class_exists('ZipArchive')) {
+        $archive = new ZipArchive();
+        if ($archive->open($path) !== true) {
+            return null;
+        }
+
+        try {
+            $content = $archive->getFromName($entry);
+            return is_string($content) ? $content : null;
+        } finally {
+            $archive->close();
+        }
+    }
+
+    if (!class_exists('PharData')) {
+        return null;
+    }
+
+    try {
+        $archive = new PharData($path);
+        return isset($archive[$entry]) ? $archive[$entry]->getContent() : null;
+    } catch (UnexpectedValueException $error) {
+        return null;
+    }
+}
+
+function file_contains_bytes(string $path, string $needle): bool
+{
+    $handle = fopen($path, 'rb');
+    if ($handle === false) {
+        return false;
+    }
+
+    $overlap = '';
+    $overlapLength = max(0, strlen($needle) - 1);
+    try {
+        while (!feof($handle)) {
+            $chunk = fread($handle, 8192);
+            if ($chunk === false) {
+                return false;
+            }
+
+            $buffer = $overlap . $chunk;
+            if (strpos($buffer, $needle) !== false) {
+                return true;
+            }
+            $overlap = $overlapLength > 0 ? substr($buffer, -$overlapLength) : '';
+        }
+    } finally {
+        fclose($handle);
+    }
+
+    return false;
+}
+
 function is_valid_powerpoint_upload(string $path, string $extension): bool
 {
     if ($extension === 'ppt') {
@@ -394,25 +518,16 @@ function is_valid_powerpoint_upload(string $path, string $extension): bool
         return $signature === "\xD0\xCF\x11\xE0\xA1\xB1\x1A\xE1";
     }
 
-    if (!in_array($extension, ['pptx', 'odp'], true) || !class_exists('ZipArchive')) {
+    if (!in_array($extension, ['pptx', 'odp'], true)) {
         return false;
     }
 
-    $archive = new ZipArchive();
-    if ($archive->open($path) !== true) {
-        return false;
+    if ($extension === 'pptx') {
+        return office_zip_entry_exists($path, '[Content_Types].xml')
+            && office_zip_entry_exists($path, 'ppt/presentation.xml');
     }
 
-    try {
-        if ($extension === 'pptx') {
-            return $archive->locateName('[Content_Types].xml') !== false
-                && $archive->locateName('ppt/presentation.xml') !== false;
-        }
-
-        return $archive->getFromName('mimetype') === 'application/vnd.oasis.opendocument.presentation';
-    } finally {
-        $archive->close();
-    }
+    return read_office_zip_entry($path, 'mimetype') === 'application/vnd.oasis.opendocument.presentation';
 }
 
 function upload_error_string(int $code): string

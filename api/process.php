@@ -70,9 +70,9 @@ function build_download_url(string $filename, ?string $displayName = null): stri
 }
 
 /**
- * Extract text-based PDFs into a DOCX using Python libraries.
+ * Preserve PDF pages in a DOCX using high-resolution page images.
  */
-function pdf_text_to_docx(string $input, string $output): array
+function pdf_pages_to_docx(string $input, string $output): array
 {
     if (!is_file($input)) {
         return [false, 'The uploaded PDF could not be found.'];
@@ -513,30 +513,21 @@ switch ($tool) {
         ]);
         break;
 
-    /* ===== PDF -> Word/Excel/PPT (extract) =====
-     * True PDF->DOCX/XLSX/PPTX conversion requires complex commercial tools.
-     * For this open-source project we extract the PDF to an editable format
-     * using LibreOffice in reverse: LibreOffice can open PDFs and save them
-     * as DOCX (its Draw/Writer filter does a best-effort layout extraction).
-     */
+    /* ===== PDF -> Word/Excel/PPT ===== */
     case 'pdf_to_word':
         $stored = unique_filename(PROCESSED_DIR, 'converted.docx');
         $output = PROCESSED_DIR . $stored;
-        [$ok, $res] = pdf_text_to_docx($inputPaths[0], $output);
+        [$ok, $res] = pdf_pages_to_docx($inputPaths[0], $output);
         if (!$ok) {
-            [$ok, $res] = libreoffice_convert_filter($inputPaths[0], PROCESSED_DIR, 'pdf', 'docx');
-        }
-        if (!$ok) {
-            // Fallback message
             log_conversion($userId, $tool, $originals[0] ?? '', null, null, 'failed', $res);
-            send_json_error($res . ' If LibreOffice cannot extract your PDF, try a text-based PDF rather than a scanned one.');
+            send_json_error($res);
         }
         safe_unlink($inputPaths[0]);
         $baseName = pathinfo($originals[0] ?? basename($res), PATHINFO_FILENAME);
         log_conversion($userId, $tool, $originals[0] ?? '', basename($res), filesize($res), 'success');
         send_json_success([
             'downloads' => [['name' => $baseName . '.docx', 'url' => build_download_url(basename($res), $baseName . '.docx')]],
-            'message' => 'Converted to Word. Text-based PDFs are supported; scanned PDFs may require OCR.',
+            'message' => 'Converted to Word with the original page appearance preserved. Page content is embedded as images and is not editable as Word text.',
         ]);
         break;
 
