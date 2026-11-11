@@ -1,0 +1,27 @@
+# Smart PDF .htaccess
+# =============================================
+
+RewriteEngine On
+
+# Force HTTPS (uncomment in production)
+# RewriteCond %{HTTPS} off
+# RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Protect sensitive files and folders
+RewriteRule ^(config|includes|storage|database|vendor)(/.*)?$ - [F,L]
+RewriteRule \.(sql|md|log|ini)$ - [F,L]
+
+# Prevent directory listing
+Options -Indexes
+
+# Default character set
+AddDefaultCharset UTF-8
+
+# Protect against clickjacking
+Header always append X-Frame-Options "SAMEORIGIN"
+
+# MIME types
+AddType application/font-woff .woff
+AddType application/font-woff2 .woff2
+
+# Allow only specific file types in storage folders (handled in code too)

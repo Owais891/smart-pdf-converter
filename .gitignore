@@ -1,0 +1,20 @@
+/config/social_auth.local.php
+
+# Local Python environment
+.venv/
+
+# Installed Composer dependencies
+/vendor/
+
+# User uploads and generated files
+/storage/temp/*
+!/storage/temp/.gitkeep
+/storage/processed/*
+!/storage/processed/.gitkeep
+/storage/uploads/*
+!/storage/uploads/.gitkeep
+
+# Local environment and logs
+.env
+.env.*
+*.log

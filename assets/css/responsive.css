@@ -1,0 +1,214 @@
+/* ============================================================
+   Smart PDF - Responsive Stylesheet
+   ============================================================ */
+
+/* Large desktops down */
+@media (max-width: 1199.98px) {
+    .dropdown-menu-wide { min-width: 540px; }
+}
+
+/* Tablet */
+@media (max-width: 991.98px) {
+    :root { --header-height: 60px; }
+
+    .navbar-smart .navbar-collapse {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        padding: 1rem;
+        margin-top: .75rem;
+        box-shadow: var(--shadow-md);
+    }
+    .navbar-smart .navbar-nav { width: 100%; }
+    .navbar-smart .nav-link { padding: .65rem .85rem !important; }
+    .navbar-smart .dropdown-menu-wide {
+        min-width: 100%;
+        grid-template-columns: 1fr;
+        border: 0; padding: .5rem !important;
+        box-shadow: none;
+    }
+    .dropdown-group-title { padding-left: .5rem; margin-top: .75rem; }
+    .navbar-smart .navbar-nav .nav-item:last-child { margin-top: .5rem; }
+    .navbar-smart .btn-ghost, .navbar-smart .btn-primary-soft { width: 100%; }
+
+    .hero { padding: 3rem 0 2rem; }
+    .uploader { padding: 2rem 1rem; }
+
+    .section { padding: 2.5rem 0; }
+    .section-title { margin-bottom: 1.75rem; }
+
+    .cta-section { padding: 2.25rem 1.25rem; }
+}
+
+/* Keep tool actions visible without scrolling on short desktop screens */
+@media (min-width: 768px) and (max-height: 800px) {
+    .page-hero {
+        padding: 1rem 0 .75rem;
+    }
+    .page-hero h1 {
+        font-size: 1.85rem;
+        margin-bottom: .25rem;
+    }
+    .page-hero p {
+        font-size: .95rem;
+        margin-bottom: 0;
+    }
+    .tool-page {
+        padding: 1rem 0 1.5rem;
+    }
+    .tool-card-frame {
+        padding: 1rem 1.25rem;
+    }
+    .tool-card-frame .uploader {
+        padding: 1.25rem 1rem;
+    }
+    .tool-card-frame .uploader-icon {
+        width: 52px;
+        height: 52px;
+        margin-bottom: .75rem;
+        font-size: 1.35rem;
+    }
+    .tool-card-frame .uploader h4 {
+        margin-bottom: .35rem;
+    }
+    .tool-card-frame .uploader .text-muted {
+        margin-bottom: .75rem !important;
+    }
+    .tool-card-frame .hero-badges {
+        margin-top: 1rem;
+    }
+}
+
+/* Keep the conversion button visible in every viewport */
+.tool-action-bar {
+    position: fixed;
+    left: 50%;
+    bottom: 18px;
+    z-index: 850;
+    transform: translateX(-50%);
+    padding: 10px 14px;
+    border-radius: 14px;
+    background: var(--bg-card);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-color);
+}
+
+.tool-action-bar .btn {
+    min-width: 220px;
+}
+
+.tool-page > .container {
+    padding-bottom: 90px;
+}
+
+@media (max-height: 950px) {
+    .page-hero {
+        padding: .9rem 0 .7rem;
+    }
+    .page-hero h1 {
+        margin-bottom: .25rem;
+    }
+    .page-hero p {
+        margin-bottom: 0;
+    }
+    .tool-page {
+        padding: .75rem 0 1rem;
+    }
+    .tool-card-frame {
+        padding: 1rem 1.25rem;
+    }
+    .tool-card-frame .uploader {
+        padding: 1.25rem 1rem;
+    }
+    .tool-card-frame .uploader-icon {
+        width: 52px;
+        height: 52px;
+        margin-bottom: .6rem;
+    }
+    .tool-card-frame .uploader h4 {
+        margin-bottom: .25rem;
+    }
+    .tool-card-frame .uploader .text-muted {
+        margin-bottom: .65rem !important;
+    }
+    .tool-card-frame .hero-badges {
+        margin-top: .75rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .tool-action-bar {
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+        transform: none;
+    }
+    .tool-action-bar .btn {
+        width: 100%;
+        min-width: 0;
+    }
+}
+
+/* Mobile landscape */
+@media (max-width: 767.98px) {
+    .hero h1 { font-size: 1.85rem; }
+    .hero p.lead { font-size: 1rem; }
+    .hero-badges { gap: .75rem; }
+    .hero-badge { font-size: .8rem; }
+
+    .tool-card { padding: 1.25rem 1rem; }
+    .tool-card-icon { width: 50px; height: 50px; font-size: 1.25rem; }
+    .tool-card h5 { font-size: .92rem; }
+
+    .form-card { padding: 1.75rem 1.25rem; }
+
+    .flash-container {
+        left: 12px; right: 12px; top: calc(var(--header-height) + 12px);
+        min-width: auto; max-width: none;
+    }
+
+    .tool-page .tool-header h1 { font-size: 1.5rem; }
+    .tool-card-frame { padding: 1.25rem; }
+
+    .how-step { padding: 1rem; }
+    .review-card { padding: 1.25rem; }
+
+    .page-hero { padding: 2rem 0 1.25rem; }
+
+    .site-footer { padding: 2rem 0 1rem; }
+}
+
+/* Small phones */
+@media (max-width: 575.98px) {
+    .hero { padding: 2rem 0 1.5rem; }
+    .hero h1 { font-size: 1.6rem; }
+    .uploader-icon { width: 52px; height: 52px; font-size: 1.3rem; }
+    .uploader h4 { font-size: 1.05rem; }
+
+    .btn { font-size: .9rem; }
+    .btn-primary, .btn-primary-soft, .btn-ghost { width: 100%; }
+
+    .tool-card-icon { width: 44px; height: 44px; font-size: 1.05rem; }
+    .stat-counter .num { font-size: 1.5rem; }
+
+    .cta-section { padding: 1.75rem 1rem; }
+    .cta-section h2 { font-size: 1.4rem; }
+    .cta-section .btn { padding: .65rem 1.25rem; }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Print */
+@media print {
+    .navbar-smart, .site-footer, .back-to-top, .page-loader, .flash-container { display: none !important; }
+    .page-main { padding-top: 0; }
+    body { background: #fff; color: #000; }
+}

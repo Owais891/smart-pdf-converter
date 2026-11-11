@@ -1,0 +1,10 @@
+# Deny ALL direct web access to anything inside /storage.
+# Files are served via /api/download.php (PHP readfile), never directly.
+
+Require all denied
+Options -Indexes
+
+# Never execute PHP in this directory
+<FilesMatch "\.(php|phtml|php3|php4|php5|php7|phps|cgi|pl)$">
+    Require all denied
+</FilesMatch>
